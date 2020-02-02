@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/gorilla/mux"
+	"github.com/lborie/go-gis/dao"
 	"github.com/lborie/go-gis/handlers"
 	"net/http"
 	"os"
@@ -20,6 +21,7 @@ func main() {
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	})
+	r.HandleFunc("/geojson", handlers.GeoJson)
 
 	var serverPort = "80"
 	if os.Getenv("APPSETTING_PORT") != "" {
@@ -40,6 +42,14 @@ func main() {
 		ForceColors:            true,
 		DisableLevelTruncation: true,
 	})
+
+	// Init databse connection
+	connectionURI := os.Getenv("DB_CONNECTION_URI")
+	db, err := dao.InitDatabasePostgreSQL(connectionURI)
+	if err != nil {
+		log.Errorf("Connection to database impossible : %s", err.Error())
+	}
+	dao.DB = db
 
 	// Launch
 	go func() {
