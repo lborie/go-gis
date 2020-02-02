@@ -47,11 +47,42 @@ func (db *databasePostgreSQL) Select1() (bool, error) {
 	return result, nil
 }
 
-func (db *databasePostgreSQL) GeoJSON() (string, error) {
+func (db *databasePostgreSQL) GeoJSONDepartements() (string, error) {
 	var result string
 
 	if err := db.session.QueryRow(`
-	Select 1
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(
+								json_build_object(
+									'type',       'Feature',
+									'id',         gid,
+									'geometry',   ST_AsGeoJSON(geom, 3)::json
+								)
+				    	)
+				)
+			from "departements-20180101"
+`).Scan(&result); err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
+func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
+	var result string
+
+	if err := db.session.QueryRow(`
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(
+								json_build_object(
+									'type',       'Feature',
+									'id',         gid,
+									'geometry',   ST_AsGeoJSON(geom, 3)::json
+								)
+				    	)
+				)
+			from "regions-20180101"
 `).Scan(&result); err != nil {
 		return "", err
 	}

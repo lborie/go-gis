@@ -21,7 +21,8 @@ func main() {
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	})
-	r.HandleFunc("/geojson", handlers.GeoJson)
+	r.HandleFunc("/regions", handlers.Regions)
+	r.HandleFunc("/departements", handlers.Departements)
 
 	var serverPort = "80"
 	if os.Getenv("APPSETTING_PORT") != "" {

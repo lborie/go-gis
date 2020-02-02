@@ -10,5 +10,6 @@ var DB Database
 // Database Interface
 type Database interface {
 	Select1() (bool, error)
-	GeoJSON() (string, error)
+	GeoJSONDepartements() (string, error)
+	GeoJSONRegions() (string, error)
 }

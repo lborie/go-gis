@@ -26,6 +26,11 @@
             center: {lat: 50.631, lng: 3.012},
             zoom: 12
         });
+        map.data.setStyle({
+            fillColor: 'green'
+        });
+        map.data.loadGeoJson('http://localhost/regions');
+        map.data.loadGeoJson('http://localhost/departements');
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{.GOOGLE_MAPS_KEY}}&callback=initMap"

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/lborie/go-gis/dao"
 	"github.com/sirupsen/logrus"
 	"html/template"
@@ -24,17 +23,30 @@ func RenderMap(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func GeoJson(w http.ResponseWriter, r *http.Request) {
-	select1, err := dao.DB.Select1()
+func Regions(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("requesting Geojson Regions")
+	result, err := dao.DB.GeoJSONRegions()
 	if err != nil {
 		logrus.Errorf(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	logrus.Info(select1)
-	_, err = w.Write([]byte(fmt.Sprintf("voilà le résultat : %v", select1)))
+	_, err = w.Write([]byte(result))
 	if err != nil {
 		logrus.Errorf(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
+}
+
+func Departements(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("requesting Geojson Departements")
+	result, err := dao.DB.GeoJSONDepartements()
+	if err != nil {
+		logrus.Errorf(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	_, err = w.Write([]byte(result))
+	if err != nil {
+		logrus.Errorf(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
