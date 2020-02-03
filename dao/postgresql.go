@@ -57,7 +57,12 @@ func (db *databasePostgreSQL) GeoJSONDepartements() (string, error) {
 								json_build_object(
 									'type',       'Feature',
 									'id',         d.gid,
-									'geometry',   ST_AsGeoJSON(d.geom, 3)::json
+									'geometry',   ST_AsGeoJSON(d.geom, 3)::json,
+								    'properties', json_build_object(
+								        'id', d.gid,
+								        'name', d.nom,
+								        'type', 'departement'
+								    )
 								)
 				    	)
 				)
@@ -80,12 +85,17 @@ func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
 								json_build_object(
 									'type',       'Feature',
 									'id',         gid,
-									'geometry',   ST_AsGeoJSON(geom, 3)::json
+									'geometry',   ST_AsGeoJSON(geom, 3)::json,
+								    'properties', json_build_object(
+								        'id', gid,
+								        'name', nom,
+								        'type', 'region'
+								    )
 								)
 				    	)
 				)
 			from "regions-20180101"
-			where nom = 'Hauts-de-France'
+			--where nom = 'Hauts-de-France'
 `).Scan(&result); err != nil {
 		return "", err
 	}

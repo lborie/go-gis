@@ -26,9 +26,15 @@
             center: {lat: 50.631, lng: 3.012},
             zoom: 12
         });
-        map.data.setStyle({
-            fillColor: 'green'
-        });
+        map.data.setStyle(
+            function(feature) {
+                var type = feature.getProperty('type');
+                var color = type === 'departement' ? 'red' : 'green';
+                return {
+                    fillColor: color,
+                    strokeWeight: 1
+                };
+            });
         map.data.loadGeoJson('http://localhost/regions');
         map.data.loadGeoJson('http://localhost/departements');
     }
