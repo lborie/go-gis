@@ -35,8 +35,8 @@
                     strokeWeight: 1
                 };
             });
-        map.data.loadGeoJson('http://localhost/regions');
-        map.data.loadGeoJson('http://localhost/departements');
+        map.data.loadGeoJson('/regions');
+        map.data.loadGeoJson('/departements');
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{.GOOGLE_MAPS_KEY}}&callback=initMap"

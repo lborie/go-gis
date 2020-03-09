@@ -53,18 +53,7 @@ func (db *databasePostgreSQL) GeoJSONDepartements() (string, error) {
 	if err := db.session.QueryRow(`
 			select json_build_object(
 				'type', 'FeatureCollection',
-				'features', json_agg(
-								json_build_object(
-									'type',       'Feature',
-									'id',         d.gid,
-									'geometry',   ST_AsGeoJSON(d.geom, 3)::json,
-								    'properties', json_build_object(
-								        'id', d.gid,
-								        'name', d.nom,
-								        'type', 'departement'
-								    )
-								)
-				    	)
+				'features', json_agg(ST_AsGeoJSON(d.*)::json)
 				)
 			from "departements-20180101" d
 			join "regions-20180101" r on st_within(d.geom, r.geom)
@@ -81,21 +70,10 @@ func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
 	if err := db.session.QueryRow(`
 			select json_build_object(
 				'type', 'FeatureCollection',
-				'features', json_agg(
-								json_build_object(
-									'type',       'Feature',
-									'id',         gid,
-									'geometry',   ST_AsGeoJSON(geom, 3)::json,
-								    'properties', json_build_object(
-								        'id', gid,
-								        'name', nom,
-								        'type', 'region'
-								    )
-								)
-				    	)
+				'features', json_agg(ST_AsGeoJSON(r.*)::json)
 				)
-			from "regions-20180101"
-			--where nom = 'Hauts-de-France'
+			from "regions-20180101" r
+			where r.nom = 'Hauts-de-France'
 `).Scan(&result); err != nil {
 		return "", err
 	}
