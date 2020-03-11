@@ -20,4 +20,5 @@ import-regions:
 import-sncf:
 	docker exec --user karnott -it go-gis /bin/bash -c 'shp2pgsql -s 4326 -d -I /workdir/formes-des-lignes-du-rfn/formes-des-lignes-du-rfn.shp | psql -U karnott -d karnott'
 
-import: import-regions import-departements import-sncf
+init: launch-db import-regions import-departements import-sncf
+	docker exec --user karnott -it go-gis /bin/bash -c 'cat /workdir/simplify.sql | psql -U karnott -d karnott'

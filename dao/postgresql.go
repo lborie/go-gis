@@ -108,12 +108,12 @@ func (db *databasePostgreSQL) GeoJSONSNCFParRegions() (string, error) {
 				'features', json_agg(ST_AsGeoJSON(par_regions.*)::json)
 				)
 			from (select r.nom, 
-			             r.geom, 
-			             st_length(st_intersection(r.geom, st_collect(sncf.geom)),true) size,
-			             st_area(r.geom, true) area
+			             r.geom_simplified, 
+			             st_length(st_intersection(r.geom_simplified, st_collect(sncf.geom)),true) size,
+			             st_area(r.geom_simplified, true) area
 				from "formes-des-lignes-du-rfn" sncf
-				join "regions-20180101" r on st_intersects(sncf.geom,r.geom)
-				group by r.nom, r.geom) par_regions
+				join "regions-20180101" r on st_intersects(sncf.geom,r.geom_simplified)
+				group by r.gid) par_regions
 `).Scan(&result); err != nil {
 		return "", err
 	}
@@ -130,12 +130,12 @@ func (db *databasePostgreSQL) GeoJSONSNCFParDepartements() (string, error) {
 				'features', json_agg(ST_AsGeoJSON(par_departements.*)::json)
 				)
 			from (select d.nom, 
-			             d.geom, 
-			             st_length(st_intersection(d.geom, st_collect(sncf.geom)),true) size,
-			             st_area(d.geom, true) area
+			             d.geom_simplified, 
+			             st_length(st_intersection(d.geom_simplified, st_collect(sncf.geom)),true) size,
+			             st_area(d.geom_simplified, true) area
 				from "formes-des-lignes-du-rfn" sncf
-				join "departements-20180101" d on st_intersects(sncf.geom,d.geom)
-				group by d.nom, d.geom) par_departements
+				join "departements-20180101" d on st_intersects(sncf.geom,d.geom_simplified)
+				group by d.gid) par_departements
 `).Scan(&result); err != nil {
 		return "", err
 	}
