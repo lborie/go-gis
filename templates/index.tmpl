@@ -37,9 +37,10 @@
             });
         map.data.loadGeoJson('/regions');
         map.data.loadGeoJson('/departements');
+        map.data.loadGeoJson('/sncf');
     }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{.GOOGLE_MAPS_KEY}}&callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key={{.GOOGLE_MAPS_KEY}}&callback=initMap&libraries=visualization"
         async defer></script>
 </body>
 </html>

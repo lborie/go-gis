@@ -79,3 +79,18 @@ func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
 	}
 	return result, nil
 }
+
+func (db *databasePostgreSQL) GeoJSONSNCF() (string, error) {
+	var result string
+
+	if err := db.session.QueryRow(`
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(ST_AsGeoJSON(sncf.*)::json)
+				)
+			from "formes-des-lignes-du-rfn" sncf
+`).Scan(&result); err != nil {
+		return "", err
+	}
+	return result, nil
+}

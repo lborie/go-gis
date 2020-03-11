@@ -7,4 +7,5 @@ type Database interface {
 	Select1() (bool, error)
 	GeoJSONDepartements() (string, error)
 	GeoJSONRegions() (string, error)
+	GeoJSONSNCF() (string, error)
 }

@@ -16,3 +16,6 @@ import-departements:
 
 import-regions:
 	docker exec --user karnott -it go-gis /bin/bash -c 'shp2pgsql -s 4326 -d -I /workdir/regions-20180101-shp/regions-20180101.shp | psql -U karnott -d karnott'
+
+import-sncf:
+	docker exec --user karnott -it go-gis /bin/bash -c 'shp2pgsql -s 4326 -d -I /workdir/formes-des-lignes-du-rfn/formes-des-lignes-du-rfn.shp | psql -U karnott -d karnott'

@@ -23,6 +23,7 @@ func main() {
 	})
 	r.HandleFunc("/regions", handlers.Regions)
 	r.HandleFunc("/departements", handlers.Departements)
+	r.HandleFunc("/sncf", handlers.SNCF)
 
 	var serverPort = "80"
 	if os.Getenv("APPSETTING_PORT") != "" {
