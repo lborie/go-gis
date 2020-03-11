@@ -8,4 +8,5 @@ type Database interface {
 	GeoJSONDepartements() (string, error)
 	GeoJSONRegions() (string, error)
 	GeoJSONSNCF() (string, error)
+	GeoJSONSNCFParRegions() (string, error)
 }

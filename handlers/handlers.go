@@ -64,3 +64,17 @@ func SNCF(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
+
+func SNCFParRegions(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("requesting Geojson SNCF Par Regions")
+	result, err := dao.DB.GeoJSONSNCFParRegions()
+	if err != nil {
+		logrus.Errorf(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	_, err = w.Write([]byte(result))
+	if err != nil {
+		logrus.Errorf(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}

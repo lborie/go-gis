@@ -94,3 +94,24 @@ func (db *databasePostgreSQL) GeoJSONSNCF() (string, error) {
 	}
 	return result, nil
 }
+
+func (db *databasePostgreSQL) GeoJSONSNCFParRegions() (string, error) {
+	var result string
+
+	if err := db.session.QueryRow(`
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(ST_AsGeoJSON(sncf2.*)::json)
+				)
+			from (select r.nom, 
+			             r.geom, 
+			             st_length(st_intersection(r.geom, st_collect(sncf1.geom)),true) size,
+			             st_area(r.geom, true) area
+				from "formes-des-lignes-du-rfn" sncf1
+				join "regions-20180101" r on st_intersects(sncf1.geom,r.geom)
+				group by r.nom, r.geom) sncf2
+`).Scan(&result); err != nil {
+		return "", err
+	}
+	return result, nil
+}

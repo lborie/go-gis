@@ -35,9 +35,33 @@
                     strokeWeight: 1
                 };
             });
-        map.data.loadGeoJson('/regions');
-        map.data.loadGeoJson('/departements');
+        //map.data.loadGeoJson('/regions');
+        //map.data.loadGeoJson('/departements');
+
+
+        map.data.setStyle(
+            function(feature) {
+                var name = feature.getProperty('nom');
+                var size = feature.getProperty('size');
+                var area = feature.getProperty('area');
+                console.log(name);
+                let note = size / Math.sqrt(area);
+                console.log(note);
+                color = 'green';
+                if (note < 5) {
+                    color = 'red';
+                } else if (note < 10) {
+                    color = 'orange'
+                } else if (note < 15) {
+                    color = 'yellow'
+                }
+                return {
+                    fillColor: color,
+                    strokeWeight: 1
+                };
+            });
         map.data.loadGeoJson('/sncf');
+        map.data.loadGeoJson('/sncf/repartition');
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{.GOOGLE_MAPS_KEY}}&callback=initMap&libraries=visualization"
