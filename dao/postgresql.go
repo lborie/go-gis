@@ -47,6 +47,24 @@ func (db *databasePostgreSQL) Select1() (bool, error) {
 	return result, nil
 }
 
+// STEP 1
+func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
+	var result string
+
+	if err := db.session.QueryRow(`
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(ST_AsGeoJSON(r.*)::json)
+				)
+			from "regions-20180101" r
+			where r.nom = 'Hauts-de-France'
+`).Scan(&result); err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
+// STEP 2
 func (db *databasePostgreSQL) GeoJSONDepartements() (string, error) {
 	var result string
 
@@ -64,22 +82,7 @@ func (db *databasePostgreSQL) GeoJSONDepartements() (string, error) {
 	return result, nil
 }
 
-func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
-	var result string
-
-	if err := db.session.QueryRow(`
-			select json_build_object(
-				'type', 'FeatureCollection',
-				'features', json_agg(ST_AsGeoJSON(r.*)::json)
-				)
-			from "regions-20180101" r
-			where r.nom = 'Hauts-de-France'
-`).Scan(&result); err != nil {
-		return "", err
-	}
-	return result, nil
-}
-
+// STEP 3
 func (db *databasePostgreSQL) GeoJSONSNCF() (string, error) {
 	var result string
 
@@ -95,21 +98,44 @@ func (db *databasePostgreSQL) GeoJSONSNCF() (string, error) {
 	return result, nil
 }
 
+// STEP 4
 func (db *databasePostgreSQL) GeoJSONSNCFParRegions() (string, error) {
 	var result string
 
 	if err := db.session.QueryRow(`
 			select json_build_object(
 				'type', 'FeatureCollection',
-				'features', json_agg(ST_AsGeoJSON(sncf2.*)::json)
+				'features', json_agg(ST_AsGeoJSON(par_regions.*)::json)
 				)
 			from (select r.nom, 
 			             r.geom, 
-			             st_length(st_intersection(r.geom, st_collect(sncf1.geom)),true) size,
+			             st_length(st_intersection(r.geom, st_collect(sncf.geom)),true) size,
 			             st_area(r.geom, true) area
-				from "formes-des-lignes-du-rfn" sncf1
-				join "regions-20180101" r on st_intersects(sncf1.geom,r.geom)
-				group by r.nom, r.geom) sncf2
+				from "formes-des-lignes-du-rfn" sncf
+				join "regions-20180101" r on st_intersects(sncf.geom,r.geom)
+				group by r.nom, r.geom) par_regions
+`).Scan(&result); err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
+// STEP 5
+func (db *databasePostgreSQL) GeoJSONSNCFParDepartements() (string, error) {
+	var result string
+
+	if err := db.session.QueryRow(`
+			select json_build_object(
+				'type', 'FeatureCollection',
+				'features', json_agg(ST_AsGeoJSON(par_departements.*)::json)
+				)
+			from (select d.nom, 
+			             d.geom, 
+			             st_length(st_intersection(d.geom, st_collect(sncf.geom)),true) size,
+			             st_area(d.geom, true) area
+				from "formes-des-lignes-du-rfn" sncf
+				join "departements-20180101" d on st_intersects(sncf.geom,d.geom)
+				group by d.nom, d.geom) par_departements
 `).Scan(&result); err != nil {
 		return "", err
 	}

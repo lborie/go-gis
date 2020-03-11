@@ -24,7 +24,8 @@ func main() {
 	r.HandleFunc("/regions", handlers.Regions)
 	r.HandleFunc("/departements", handlers.Departements)
 	r.HandleFunc("/sncf", handlers.SNCF)
-	r.HandleFunc("/sncf/repartition", handlers.SNCFParRegions)
+	r.HandleFunc("/sncf/regions", handlers.SNCFParRegions)
+	r.HandleFunc("/sncf/departements", handlers.SNCFParDepartements)
 
 	var serverPort = "80"
 	if os.Getenv("APPSETTING_PORT") != "" {

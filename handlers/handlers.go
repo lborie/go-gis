@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func RenderMap(w http.ResponseWriter, r *http.Request) {
+func RenderMap(w http.ResponseWriter, _ *http.Request) {
 	googleMapsKey := os.Getenv("GOOGLE_MAPS_KEY")
 	if googleMapsKey == "" {
 		logrus.Error("missing google maps key")
@@ -23,51 +23,33 @@ func RenderMap(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func Regions(w http.ResponseWriter, r *http.Request) {
+func Regions(w http.ResponseWriter, _ *http.Request) {
 	logrus.Info("requesting Geojson Regions")
-	result, err := dao.DB.GeoJSONRegions()
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	_, err = w.Write([]byte(result))
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	requestGeojson(w, dao.DB.GeoJSONRegions)
 }
 
-func Departements(w http.ResponseWriter, r *http.Request) {
+func Departements(w http.ResponseWriter, _ *http.Request) {
 	logrus.Info("requesting Geojson Departements")
-	result, err := dao.DB.GeoJSONDepartements()
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	_, err = w.Write([]byte(result))
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	requestGeojson(w, dao.DB.GeoJSONDepartements)
 }
 
-func SNCF(w http.ResponseWriter, r *http.Request) {
+func SNCF(w http.ResponseWriter, _ *http.Request) {
 	logrus.Info("requesting Geojson SNCF")
-	result, err := dao.DB.GeoJSONSNCF()
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	_, err = w.Write([]byte(result))
-	if err != nil {
-		logrus.Errorf(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-	}
+	requestGeojson(w, dao.DB.GeoJSONSNCF)
 }
 
-func SNCFParRegions(w http.ResponseWriter, r *http.Request) {
+func SNCFParRegions(w http.ResponseWriter, _ *http.Request) {
 	logrus.Info("requesting Geojson SNCF Par Regions")
-	result, err := dao.DB.GeoJSONSNCFParRegions()
+	requestGeojson(w, dao.DB.GeoJSONSNCFParRegions)
+}
+
+func SNCFParDepartements(w http.ResponseWriter, _ *http.Request) {
+	logrus.Info("requesting Geojson SNCF Par Departements")
+	requestGeojson(w, dao.DB.GeoJSONSNCFParDepartements)
+}
+
+func requestGeojson(w http.ResponseWriter, f func()(string, error)){
+	result, err := f()
 	if err != nil {
 		logrus.Errorf(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
