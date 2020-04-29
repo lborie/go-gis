@@ -22,3 +22,6 @@ import-sncf:
 
 init: launch-db import-regions import-departements import-sncf
 	docker exec --user karnott -it go-gis /bin/bash -c 'cat /workdir/simplify.sql | psql -U karnott -d karnott'
+
+create-france: import-regions
+	docker exec --user karnott -it go-gis /bin/bash -c 'cat /workdir/france.sql | psql -U karnott -d karnott'
