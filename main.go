@@ -42,6 +42,7 @@ func main() {
 		ForceColors:            true,
 		DisableLevelTruncation: true,
 	})
+	log.SetLevel(log.DebugLevel)
 
 	// Init databse connection
 	connectionURI := os.Getenv("DB_CONNECTION_URI")
