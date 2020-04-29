@@ -43,6 +43,7 @@ func main() {
 		DisableLevelTruncation: true,
 	})
 	log.SetLevel(log.DebugLevel)
+	log.Info("Application starting")
 
 	// Init databse connection
 	connectionURI := os.Getenv("DB_CONNECTION_URI")
@@ -56,6 +57,8 @@ func main() {
 	go func() {
 		log.Fatal(server.ListenAndServe())
 	}()
+
+	log.Info("Application started")
 
 	// Graceful Shutdown
 	interrupt := make(chan os.Signal, 1)
