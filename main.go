@@ -17,16 +17,11 @@ import (
 func main() {
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", handlers.RenderMap)
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 	r.HandleFunc("/regions", handlers.Regions)
-	r.HandleFunc("/departements", handlers.Departements)
 	r.HandleFunc("/covid", handlers.Covid)
-	r.HandleFunc("/sncf", handlers.SNCF)
-	r.HandleFunc("/sncf/regions", handlers.SNCFParRegions)
-	r.HandleFunc("/sncf/departements", handlers.SNCFParDepartements)
 
 	var serverPort = "80"
 	if os.Getenv("APPSETTING_PORT") != "" {
