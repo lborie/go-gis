@@ -42,7 +42,6 @@ func main() {
 		ForceColors:            true,
 		DisableLevelTruncation: true,
 	})
-	log.SetLevel(log.DebugLevel)
 	log.Info("Application starting")
 
 	// Init databse connection

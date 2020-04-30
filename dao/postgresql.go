@@ -59,17 +59,19 @@ func (db *databasePostgreSQL) GeoJSONRegions() (string, error) {
 func (db *databasePostgreSQL) GeoJSONCovid(lat, long float64) (string, error) {
 	var result string
 
-	query := fmt.Sprintf(`
+	if err := db.session.QueryRow(`
+with distance_in_france as (
+    select st_intersection(st_transform(st_buffer(st_transform(st_setsrid(st_makepoint($1, $2), 4326), 2154), 100000), 4326), france.geom)
+    from france
+)
 select json_build_object(
 	   'type', 'FeatureCollection',
 	   'features', json_agg(
-			   ST_AsGeoJSON(st_intersection(st_transform(st_buffer(st_transform(st_setsrid(st_makepoint(%f, %f), 4326), 2154), 100000), 4326), france.geom))::json
+			   ST_AsGeoJSON(dif.*)::json
 		   )
    )
-from france
-`, long, lat)
-
-	if err := db.session.QueryRow(query).Scan(&result); err != nil {
+from distance_in_france dif
+`, long, lat).Scan(&result); err != nil {
 		return "", err
 	}
 	return result, nil
