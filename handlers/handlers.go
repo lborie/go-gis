@@ -17,7 +17,7 @@ func RenderMap(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	t := template.Must(template.ParseFiles(filepath.Join("templates", "index.tmpl")))
+	t := template.Must(template.ParseFiles(filepath.Join("templates", "index.gohtml")))
 	_ = t.Execute(w, map[string]interface{}{
 		"GOOGLE_MAPS_KEY": googleMapsKey,
 	})
